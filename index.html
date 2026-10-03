@@ -896,14 +896,14 @@
                 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js'
             ]
         },
-        jalaali: {
-            test: () => typeof jalaali !== 'undefined',
-            urls: [
-                'https://cdn.jsdelivr.net/npm/jalaali-js@1.2.0/dist/jalaali.js',
-                'https://unpkg.com/jalaali-js@1.2.0/dist/jalaali.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/jalaali-js/1.2.0/jalaali.js'
-            ]
-        },
+     jalaali: {
+    test: () => typeof jalaali !== 'undefined',
+    urls: [
+        'https://cdn.jsdelivr.net/npm/jalaali-js@1.2.0/dist/jalaali.min.js',
+        'https://cdn.jsdelivr.net/gh/jalaali/jalaali-js@master/dist/jalaali.js',
+        'https://unpkg.com/jalaali-js@latest/dist/jalaali.js'
+    ]
+},
         jspdf: {
             test: () => typeof window.jspdf !== 'undefined' || typeof jsPDF !== 'undefined',
             urls: [
