@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Referrer-Policy" content="no-referrer">
+<meta name="theme-color" content="#1e3a8a">
+<title>دفترچه اقساط هوشمند بنگاه موتورفروشی - نسخه نهایی</title>
+
+<!-- ==================== فونت وزیرمتن ==================== -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://unpkg.com">
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+
+<style>
+    :root{
+        --primary:#1e3a8a; --primary-light:#3b82f6;
+        --success:#16a34a; --danger:#dc2626;
+        --warning:#f59e0b; --info:#0891b2;
+        --purple:#7c3aed; --pink:#db2777;
+        --bg:#f1f5f9; --card:#ffffff; --text:#1e293b;
+        --muted:#64748b; --border:#e2e8f0;
+        --input-bg:#f8fafc; --input-focus:#ffffff;
+        --header-grad:linear-gradient(135deg,#1e3a8a,#3b82f6);
+        --shadow:0 2px 10px rgba(0,0,0,.06);
+        --shadow-hover:0 4px 15px rgba(0,0,0,.15);
+        --info-bg:#eff6ff; --info-border:#3b82f6;
+        --modal-overlay:rgba(0,0,0,.65);
+        --section-bg:#f8fafc;
+    }
+
+    body.dark{
+        --primary:#60a5fa; --primary-light:#93c5fd;
+        --success:#4ade80; --danger:#f87171;
+        --warning:#fbbf24; --info:#22d3ee;
+        --purple:#a78bfa; --pink:#f472b6;
+        --bg:#0f172a; --card:#1e293b; --text:#e2e8f0;
+        --muted:#94a3b8; --border:#334155;
+        --input-bg:#0f172a; --input-focus:#1e293b;
+        --header-grad:linear-gradient(135deg,#0c1836,#1e3a8a);
+        --shadow:0 2px 10px rgba(0,0,0,.4);
+        --shadow-hover:0 4px 15px rgba(0,0,0,.6);
+        --info-bg:#1e293b; --info-border:#60a5fa;
+        --modal-overlay:rgba(0,0,0,.85);
+        --section-bg:#0f172a;
+    }
+
+    *{
+        box-sizing:border-box;margin:0;padding:0;
+        font-family:'Vazirmatn', Tahoma, sans-serif;
+        font-feature-settings:"ss02";
+        transition:background-color .3s ease, color .3s ease, border-color .3s ease;
+    }
+    body{background:var(--bg);color:var(--text);padding:15px;line-height:1.8;font-variant-numeric:normal;min-height:100vh;}
+    .container{max-width:1600px;margin:auto;}
+
+    /* ==================== صفحه ورود ==================== */
+    .login-screen{
+        position:fixed;inset:0;background:var(--header-grad);
+        display:flex;justify-content:center;align-items:center;z-index:9999;padding:20px;
+    }
+    .login-screen.hidden{display:none;}
+    .login-box{
+        background:var(--card);border-radius:20px;padding:35px;
+        max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);text-align:center;
+    }
+    .login-box .icon{font-size:60px;margin-bottom:15px;}
+    .login-box h2{color:var(--primary);margin-bottom:8px;font-size:22px;}
+    .login-box .subtitle{color:var(--muted);font-size:13px;margin-bottom:25px;}
+    .login-box input{
+        width:100%;padding:12px 16px;font-size:15px;
+        margin-bottom:12px;border:2px solid var(--border);border-radius:12px;
+        font-family:'Vazirmatn',Tahoma;background:var(--input-bg);color:var(--text);
+    }
+    .login-box input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(59,130,246,.15);}
+    .login-box .btn{width:100%;padding:14px;font-size:15px;margin-top:5px;}
+    .login-error{color:var(--danger);font-size:13px;margin-top:10px;min-height:20px;font-weight:600;}
+    .login-hint{
+        font-size:11px;color:var(--muted);margin-top:15px;line-height:1.6;
+        background:var(--section-bg);padding:10px;border-radius:8px;border:1px solid var(--border);
+    }
+    .login-hint b{color:var(--primary);}
+    .security-badge{
+        display:inline-flex;align-items:center;gap:6px;
+        background:rgba(22,163,74,.15);color:var(--success);
+        padding:5px 12px;border-radius:20px;font-size:11px;
+        font-weight:700;margin-top:12px;
+    }
+
+    #app{display:none;}
+    #app.active{display:block;}
+
+    /* ==================== هدر ==================== */
+    header{
+        background:var(--header-grad);color:#fff;
+        padding:20px;border-radius:16px;
+        display:flex;justify-content:space-between;align-items:center;
+        flex-wrap:wrap;gap:15px;box-shadow:var(--shadow-hover);
+    }
+    header h1{font-size:22px;display:flex;align-items:center;gap:10px;}
+    header .stats{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;}
+    header .stats div{background:rgba(255,255,255,.15);padding:8px 14px;border-radius:10px;}
+    .header-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    .icon-btn{
+        background:rgba(255,255,255,.2);border:none;color:#fff;
+        width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px;
+        display:flex;align-items:center;justify-content:center;transition:.3s;
+    }
+    .icon-btn:hover:not(:disabled){background:rgba(255,255,255,.35);transform:scale(1.1);}
+    .icon-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+    /* ==================== قفل همزمانی ==================== */
+    .lock-banner{
+        background:linear-gradient(135deg,#dc2626,#b91c1c);
+        color:#fff;padding:12px 20px;border-radius:12px;
+        margin-top:15px;display:none;align-items:center;gap:12px;
+        font-size:13px;box-shadow:var(--shadow-hover);
+    }
+    .lock-banner.active{display:flex;}
+    .lock-banner .icon{font-size:24px;}
+
+    /* ==================== تب‌ها ==================== */
+    .tabs{
+        display:flex;gap:5px;margin-top:20px;background:var(--card);
+        padding:8px;border-radius:14px;box-shadow:var(--shadow);
+        overflow-x:auto;flex-wrap:nowrap;
+    }
+    .tab{
+        padding:10px 18px;border:none;background:transparent;color:var(--muted);
+        border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;
+        white-space:nowrap;display:flex;align-items:center;gap:6px;
+        font-family:'Vazirmatn', Tahoma, sans-serif;transition:.2s;
+    }
+    .tab:hover{background:var(--section-bg);}
+    .tab.active{background:var(--primary);color:#fff;}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+
+    /* ==================== کارت ==================== */
+    .card{
+        background:var(--card);border-radius:16px;padding:20px;
+        margin-top:20px;box-shadow:var(--shadow);
+    }
+    .card h2{
+        font-size:17px;margin-bottom:15px;color:var(--primary);
+        display:flex;align-items:center;gap:8px;
+        border-bottom:2px solid var(--border);padding-bottom:10px;
+    }
+    .card h2 span{font-size:20px;}
+
+    /* ==================== فرم ==================== */
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;}
+    .form-group{display:flex;flex-direction:column;gap:5px;position:relative;}
+    .form-group label{font-size:12px;color:var(--muted);font-weight:600;}
+    .form-group label .required{color:var(--danger);font-weight:700;margin-right:2px;}
+
+    input,select,textarea,button{
+        padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;
+        font-size:13px;transition:.2s;background:var(--input-bg);color:var(--text);
+        font-family:'Vazirmatn', Tahoma, sans-serif;
+    }
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary-light);background:var(--input-focus);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+    input[readonly]{background:var(--border);cursor:not-allowed;}
+    input.invalid{border-color:var(--danger);background:rgba(220,38,38,.1);}
+    input.valid{border-color:var(--success);background:rgba(22,163,74,.08);}
+
+    .hint{font-size:11px;color:var(--muted);margin-top:2px;}
+    .error-msg{font-size:11px;color:var(--danger);margin-top:2px;display:none;}
+    .error-msg.show{display:block;}
+
+    .input-with-btn{display:flex;gap:6px;align-items:stretch;}
+    .input-with-btn input{flex:1;}
+    .input-with-btn .btn{padding:0 10px;font-size:11px;white-space:nowrap;}
+
+    /* ==================== بخش‌بندی ==================== */
+    .section-title{
+        font-size:14px;color:var(--primary);font-weight:700;
+        margin:20px 0 10px;padding:8px 12px;background:var(--info-bg);
+        border-right:4px solid var(--info-border);border-radius:8px;
+        display:flex;align-items:center;gap:8px;
+    }
+    .section-title:first-child{margin-top:0;}
+    .section-title.optional{color:var(--muted);border-right-color:var(--muted);}
+    .section-title.optional::after{content:'(اختیاری)';font-size:11px;color:var(--muted);font-weight:400;}
+
+    /* ==================== دکمه ==================== */
+    .btn{
+        padding:9px 16px;border:none;border-radius:10px;font-size:13px;
+        font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;
+        align-items:center;gap:6px;justify-content:center;
+        font-family:'Vazirmatn', Tahoma, sans-serif;
+    }
+    .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:var(--shadow-hover);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .btn-primary{background:var(--primary);color:#fff;}
+    .btn-success{background:var(--success);color:#fff;}
+    .btn-danger{background:var(--danger);color:#fff;}
+    .btn-warning{background:var(--warning);color:#fff;}
+    .btn-info{background:var(--info);color:#fff;}
+    .btn-purple{background:var(--purple);color:#fff;}
+    .btn-pink{background:var(--pink);color:#fff;}
+    .btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary);}
+    .btn-sm{padding:5px 10px;font-size:11px;}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;}
+
+    /* ==================== جدول ==================== */
+    .table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+    table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:1100px;}
+    th{background:var(--section-bg);padding:11px 8px;text-align:center;color:var(--muted);font-weight:700;border-bottom:2px solid var(--border);font-size:12px;}
+    td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--border);}
+    tr:hover td{background:var(--section-bg);}
+
+    .badge{padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;display:inline-block;}
+    .badge-success{background:rgba(22,163,74,.15);color:var(--success);}
+    .badge-danger{background:rgba(220,38,38,.15);color:var(--danger);}
+    .badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
+    .badge-info{background:rgba(8,145,178,.15);color:var(--info);}
+    .badge-secondary{background:var(--border);color:var(--muted);}
+    .badge-purple{background:rgba(124,58,237,.15);color:var(--purple);}
+    .badge-pink{background:rgba(219,39,119,.15);color:var(--pink);}
+
+    /* ==================== صفحه‌بندی ==================== */
+    .pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:15px;flex-wrap:wrap;}
+    .pagination button{padding:6px 12px;border:1.5px solid var(--border);background:var(--card);border-radius:8px;cursor:pointer;font-size:13px;color:var(--text);}
+    .pagination button:hover:not(:disabled){background:var(--section-bg);}
+    .pagination button:disabled{opacity:.4;cursor:not-allowed;}
+    .pagination .page-info{color:var(--muted);font-size:12px;margin:0 10px;}
+    .page-size-select{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-right:auto;}
+    .page-size-select select{padding:5px 8px;font-size:12px;}
+
+    /* ==================== Tag Chips ==================== */
+    .tag-filters{
+        display:flex;gap:8px;flex-wrap:wrap;
+        margin-top:15px;padding:10px;
+        background:var(--section-bg);border-radius:10px;
+    }
+    .tag-chip{
+        padding:6px 14px;border-radius:20px;
+        background:var(--card);border:1.5px solid var(--border);
+        cursor:pointer;font-size:12px;font-weight:600;
+        transition:.2s;color:var(--text);
+    }
+    .tag-chip:hover{border-color:var(--primary-light);}
+    .tag-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+    /* ==================== مودال ==================== */
+    .modal{display:none;position:fixed;inset:0;background:var(--modal-overlay);z-index:1000;justify-content:center;align-items:center;padding:15px;}
+    .modal.active{display:flex;}
+    .modal-content{background:var(--card);border-radius:16px;max-width:1100px;width:100%;max-height:92vh;overflow-y:auto;padding:25px;}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .modal-header h3{color:var(--primary);font-size:18px;}
+    .close-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);}
+
+    /* ==================== Toast ==================== */
+    .toast{
+        position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);
+        background:var(--primary);color:#fff;padding:12px 25px;border-radius:12px;
+        font-size:14px;transition:.3s;z-index:2000;box-shadow:var(--shadow-hover);
+        max-width:90vw;text-align:center;
+    }
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    .toast.success{background:var(--success);}
+    .toast.danger{background:var(--danger);}
+    .toast.warning{background:var(--warning);}
+    .toast.info{background:var(--info);}
+
+    /* ==================== Empty ==================== */
+    .empty{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+    .empty span{font-size:40px;display:block;margin-bottom:10px;}
+
+    /* ==================== خلاصه ==================== */
+    .installment-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:15px;}
+    .summary-box{background:var(--section-bg);border-radius:12px;padding:12px;text-align:center;border:1px solid var(--border);}
+    .summary-box .label{font-size:11px;color:var(--muted);margin-bottom:4px;}
+    .summary-box .value{font-size:15px;font-weight:700;color:var(--primary);}
+
+    /* ==================== Progress ==================== */
+    .progress{background:var(--border);border-radius:20px;height:10px;overflow:hidden;margin:8px 0;}
+    .progress-bar{background:linear-gradient(90deg,var(--success),#22c55e);height:100%;transition:.4s;}
+
+    /* ==================== Editable ==================== */
+    .editable-date{
+        background:var(--input-bg);border:1.5px dashed var(--primary-light);
+        border-radius:8px;padding:4px 8px;font-size:12px;width:100px;
+        text-align:center;cursor:pointer;color:var(--text);
+    }
+    .editable-date:focus{outline:none;border-style:solid;}
+
+    .editable-amount{
+        background:rgba(59,130,246,.08);border:1.5px dashed var(--primary-light);
+        border-radius:8px;padding:5px;font-size:13px;width:120px;
+        text-align:center;font-family:monospace,'Vazirmatn';
+        font-weight:700;direction:ltr;color:var(--text);
+    }
+    .editable-amount:focus{outline:none;border-style:solid;background:var(--input-focus);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+
+    /* ==================== Box ==================== */
+    .box{border:1.5px solid var(--border);border-radius:12px;padding:15px;margin-top:15px;background:var(--section-bg);}
+    .box h4{font-size:14px;margin-bottom:10px;color:var(--primary);}
+
+    /* ==================== Info Grid ==================== */
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card);}
+    .info-item{padding:10px 15px;font-size:13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;}
+    .info-item:nth-child(odd){border-left:1px solid var(--border);}
+    .info-item .k{color:var(--muted);font-weight:600;}
+    .info-item .v{color:var(--text);font-weight:700;text-align:left;}
+
+    /* ==================== Payments List ==================== */
+    .payments-list{font-size:11px;color:var(--muted);padding:8px;background:var(--section-bg);border-radius:8px;margin-top:5px;text-align:right;}
+    .payments-list div{padding:4px 0;border-bottom:1px dashed var(--border);}
+    .payments-list div:last-child{border-bottom:none;}
+    .payments-list b{color:var(--text);}
+
+    .tracking-code{background:rgba(124,58,237,.15);color:var(--purple);padding:2px 6px;border-radius:6px;font-family:monospace;font-size:11px;font-weight:700;}
+
+    .check-info-box{background:rgba(245,158,11,.15);border:1px dashed var(--warning);border-radius:8px;padding:8px;margin-top:5px;font-size:11px;text-align:right;color:var(--text);}
+    .check-info-box b{color:var(--warning);}
+
+    /* ==================== Financial Highlight ==================== */
+    .financial-highlight{
+        background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(30,58,138,.05));
+        border:1.5px solid var(--primary-light);border-radius:12px;
+        padding:15px;margin-top:15px;
+        display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;
+    }
+    body.dark .financial-highlight{background:linear-gradient(135deg,rgba(96,165,250,.1),rgba(30,58,138,.2));}
+    .fin-box{background:var(--card);border-radius:10px;padding:12px;text-align:center;box-shadow:var(--shadow);}
+    .fin-box .label{font-size:11px;color:var(--muted);margin-bottom:5px;}
+    .fin-box .value{font-size:16px;font-weight:700;color:var(--primary);}
+    .fin-box.profit .value{color:var(--success);}
+    .fin-box.final .value{color:var(--purple);}
+
+    /* ==================== Money/Decimal ==================== */
+    .money-input{font-family:monospace,'Vazirmatn';font-weight:700;letter-spacing:.5px;direction:ltr;text-align:right;font-size:14px;}
+    .decimal-input{font-family:monospace,'Vazirmatn';font-weight:700;direction:ltr;text-align:right;font-size:14px;}
+
+    /* ==================== Storage Status ==================== */
+    .storage-status{
+        background:var(--card);border-radius:12px;padding:10px 15px;
+        margin-top:15px;display:flex;justify-content:space-between;
+        align-items:center;flex-wrap:wrap;gap:10px;font-size:12px;
+        border:1.5px solid var(--border);
+    }
+    .storage-status .item{display:flex;align-items:center;gap:6px;color:var(--muted);}
+    .storage-status .item b{color:var(--text);}
+    .storage-bar{flex:1;min-width:150px;height:8px;background:var(--border);border-radius:20px;overflow:hidden;}
+    .storage-bar-inner{height:100%;background:linear-gradient(90deg,var(--success),#22c55e);transition:.4s;}
+    .storage-bar-inner.warning{background:linear-gradient(90deg,var(--warning),#f97316);}
+    .storage-bar-inner.danger{background:linear-gradient(90deg,var(--danger),#b91c1c);}
+
+    /* ==================== Dashboard ==================== */
+    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:20px;}
+    .dash-card{background:var(--card);border-radius:14px;padding:18px;border:1.5px solid var(--border);position:relative;overflow:hidden;}
+    .dash-card::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;}
+    .dash-card.blue::before{background:var(--primary);}
+    .dash-card.green::before{background:var(--success);}
+    .dash-card.red::before{background:var(--danger);}
+    .dash-card.orange::before{background:var(--warning);}
+    .dash-card.purple::before{background:var(--purple);}
+    .dash-card.pink::before{background:var(--pink);}
+    .dash-card .label{font-size:12px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .dash-card .value{font-size:22px;font-weight:800;color:var(--text);}
+    .dash-card .sub{font-size:11px;color:var(--muted);margin-top:5px;}
+
+    .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px;margin-top:20px;}
+    .chart-box{background:var(--card);border-radius:14px;padding:20px;border:1.5px solid var(--border);}
+    .chart-box h3{font-size:14px;color:var(--primary);margin-bottom:15px;display:flex;align-items:center;gap:8px;}
+    .chart-container{position:relative;height:280px;background:var(--section-bg);border-radius:12px;padding:10px;}
+
+    /* ==================== Check Status ==================== */
+    .check-status-badge{padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+    .check-status-badge.in-progress{background:rgba(245,158,11,.15);color:var(--warning);}
+    .check-status-badge.passed{background:rgba(22,163,74,.15);color:var(--success);}
+    .check-status-badge.bounced{background:rgba(220,38,38,.15);color:var(--danger);}
+
+    /* ==================== Penalty Detail ==================== */
+    .penalty-detail{
+        background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(220,38,38,.05));
+        border:1.5px solid var(--warning);border-radius:12px;padding:12px;
+        margin-top:8px;font-size:11px;
+    }
+    .penalty-detail .row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed var(--border);}
+    .penalty-detail .row:last-child{border-bottom:none;font-weight:700;padding-top:6px;}
+    .penalty-detail .row .k{color:var(--muted);}
+    .penalty-detail .row .v{color:var(--text);font-weight:700;}
+
+    /* ==================== Info Note ==================== */
+    .info-note{
+        background:rgba(124,58,237,.1);border-right:4px solid var(--purple);
+        padding:10px 15px;border-radius:8px;margin-bottom:10px;
+        font-size:12px;color:var(--text);
+    }
+
+    /* ==================== User Card ==================== */
+    .user-card{
+        background:var(--section-bg);border:1.5px solid var(--border);
+        border-radius:12px;padding:15px;margin-bottom:10px;
+        display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    }
+    .user-card .info .name{font-weight:700;font-size:14px;color:var(--text);}
+    .user-card .info .meta{font-size:11px;color:var(--muted);margin-top:3px;}
+
+    /* ==================== Exit Modal ==================== */
+    .exit-modal{
+        position:fixed;inset:0;background:rgba(0,0,0,.75);
+        z-index:10000;display:none;justify-content:center;align-items:center;padding:20px;
+    }
+    .exit-modal.active{display:flex;}
+    .exit-box{
+        background:var(--card);border-radius:20px;padding:35px;
+        max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.5);text-align:center;
+    }
+    .exit-box .exit-icon{font-size:70px;margin-bottom:15px;}
+    .exit-box h2{color:var(--primary);margin-bottom:10px;font-size:20px;}
+    .exit-box .subtitle{color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.8;}
+    .exit-box .exit-actions{display:flex;flex-direction:column;gap:10px;}
+    .exit-box .exit-actions .btn{width:100%;padding:14px;font-size:14px;}
+
+    /* ==================== Footer ==================== */
+    footer.designer{
+        text-align:center;padding:25px 15px;margin-top:30px;
+        color:var(--muted);font-size:13px;border-top:1px solid var(--border);
+    }
+    footer.designer b{
+        color:var(--primary);font-weight:700;
+        background:linear-gradient(135deg,var(--primary),var(--primary-light));
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+        background-clip:text;font-size:14px;
+    }
+    footer.designer .heart{color:var(--danger);display:inline-block;animation:beat 1.5s infinite;}
+    @keyframes beat{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+
+    /* ==================== Loading ==================== */
+    .loading-overlay{
+        position:fixed;inset:0;background:rgba(0,0,0,.7);
+        display:none;justify-content:center;align-items:center;
+        z-index:99999;color:#fff;font-size:16px;flex-direction:column;gap:15px;
+    }
+    .loading-overlay.active{display:flex;}
+    .loading-spinner{
+        width:50px;height:50px;
+        border:4px solid rgba(255,255,255,.3);
+        border-top-color:#fff;border-radius:50%;
+        animation:spin 1s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* ==================== Responsive ==================== */
+    @media (max-width:700px){
+        .info-grid{grid-template-columns:1fr;}
+        .info-item:nth-child(odd){border-left:none;}
+        header h1{font-size:16px;}
+        header .stats{font-size:11px;gap:8px;}
+        .card{padding:15px;}
+        .login-box{padding:25px;}
+        .charts-grid{grid-template-columns:1fr;}
+        .chart-container{height:220px;}
+        .exit-box{padding:25px;}
+    }
+    @media print{
+        body{background:#fff;padding:0;color:#000;}
+        .no-print{display:none !important;}
+        .card{box-shadow:none;border:1px solid #ccc;background:#fff;}
+        footer.designer{color:#333;}
+        .login-screen{display:none !important;}
+        .tabs{display:none !important;}
+        .exit-modal{display:none !important;}
+    }
+</style>
+</head>
+<body>
+
+<!-- ==================== صفحه ورود ==================== -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <div class="icon">🔐</div>
+        <h2>دفترچه اقساط هوشمند</h2>
+        <div class="subtitle">سیستم مدیریت اقساط بنگاه موتورفروشی</div>
+        
+        <input type="text" id="loginUsername" placeholder="نام کاربری" 
+               autocomplete="off" value="admin" readonly
+               style="background:var(--section-bg);cursor:not-allowed;">
+        <input type="password" id="loginPassword" 
+               placeholder="رمز عبور" autocomplete="off">
+        
+        <button class="btn btn-primary" id="loginBtn" onclick="AppCore.doLogin()">
+            🔓 ورود به سیستم
+        </button>
+        
+        <div class="login-error" id="loginError"></div>
+        
+        <div class="login-hint" id="loginHint">
+            🔐 در اولین اجرا، رمز عبور امن خود را تعیین کنید.
+            <div class="security-badge">
+                <span>🔒</span>
+                <span>رمزنگاری AES-256</span>
+            </div>
+        </div>
+        
+        <button class="btn btn-outline" id="setupBtn" 
+                style="width:100%;margin-top:10px;display:none" 
+                onclick="AppCore.openFirstSetup()">
+            ⚙️ ایجاد حساب مدیر
+        </button>
+    </div>
+</div>
+
+<!-- ==================== اپلیکیشن ==================== -->
+<div id="app">
+<div class="container">
+
+    <header>
+        <h1>🏍️ دفترچه اقساط هوشمند</h1>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="stats">
+                <div>👥 <b id="statCustomers">0</b></div>
+                <div>💰 <b id="statTotal">0</b></div>
+                <div>📥 <b id="statReceived">0</b></div>
+                <div>📉 <b id="statRemaining">0</b></div>
+                <div>⚠️ <b id="statOverdue">0</b></div>
+            </div>
+            <div class="header-btns">
+                <button class="icon-btn" id="undoBtn" onclick="AppCore.undo()" title="برگشت (Ctrl+Z)" disabled>↩️</button>
+                <button class="icon-btn" id="redoBtn" onclick="AppCore.redo()" title="ازنو (Ctrl+Y)" disabled>↪️</button>
+                <button class="icon-btn" onclick="AppUI.openSettings()" title="تنظیمات">⚙️</button>
+                <button class="icon-btn" id="themeToggle" onclick="AppUI.toggleTheme()" title="روشن/تاریک">🌙</button>
+                <button class="icon-btn" onclick="AppCore.requestLogout()" title="خروج">🚪</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="lock-banner" id="lockBanner">
+        <span class="icon">🔒</span>
+        <div style="flex:1">
+            <b>هشدار: تب دیگری از برنامه باز است!</b>
+            <div style="font-size:11px;margin-top:3px">تغییرات ذخیره نمی‌شوند. لطفاً فقط از یک تب استفاده کنید.</div>
+        </div>
+        <button class="btn btn-outline btn-sm" 
+                style="background:rgba(255,255,255,.2);color:#fff;border-color:#fff" 
+                onclick="document.getElementById('lockBanner').classList.remove('active')">✕</button>
+    </div>
+
+    <!-- تب‌ها -->
+    <div class="tabs no-print">
+        <button class="tab active" onclick="AppUI.switchTab('contracts')" id="tab-contracts">📝 قراردادها</button>
+        <button class="tab" onclick="AppUI.switchTab('dashboard')" id="tab-dashboard">📊 داشبورد</button>
+        <button class="tab" onclick="AppUI.switchTab('checks')" id="tab-checks">📋 چک‌ها</button>
+        <button class="tab" onclick="AppUI.switchTab('logs')" id="tab-logs">📜 لاگ‌ها</button>
+    </div>
+
+    <!-- ==================== تب قراردادها ==================== -->
+    <div class="tab-content active" id="content-contracts">
+
+        <div class="storage-status no-print">
+            <div class="item">💾 حجم: <b id="storageUsed">0 KB</b></div>
+            <div class="storage-bar"><div class="storage-bar-inner" id="storageBar" style="width:0%"></div></div>
+            <div class="item">📅 آخرین پشتیبان: <b id="lastBackup">هرگز</b></div>
+            <div class="item" id="autoSaveIndicator" style="font-size:11px"></div>
+            <button class="btn btn-outline btn-sm" onclick="AppUI.backupNow()">💾 پشتیبان فوری</button>
+        </div>
+
+        <div class="card no-print" id="contractFormCard">
+            <h2><span id="formIcon">📝</span> <span id="formTitle">ثبت قرارداد جدید</span></h2>
+
+            <div class="section-title">👤 مشخصات مشتری</div>
+            <div class="form-grid">
+                <div class="form-group"><label>نام و نام خانوادگی <span class="required">*</span></label><input type="text" id="customerName" placeholder="علی محمدی"></div>
+                <div class="form-group"><label>نام پدر</label><input type="text" id="customerFather" placeholder="حسن"></div>
+                <div class="form-group"><label>کد ملی (۱۰ رقم) <span class="required">*</span></label><input type="text" id="customerNational" placeholder="0012345678" maxlength="10" inputmode="numeric" oninput="validateNational(this)" onblur="validateNational(this)"><div class="error-msg" id="err-customerNational">کد ملی باید دقیقاً ۱۰ رقم باشد</div></div>
+                <div class="form-group"><label>شماره موبایل (۱۱ رقم) <span class="required">*</span></label><input type="text" id="customerPhone" placeholder="09121234567" maxlength="11" inputmode="numeric" oninput="validateMobile(this)" onblur="validateMobile(this)"><div class="error-msg" id="err-customerPhone">موبایل باید ۱۱ رقم و با ۰۹ شروع شود</div></div>
+                <div class="form-group"><label>تلفن ثابت (۱۱ رقم)</label><input type="text" id="customerLandline" placeholder="02112345678" maxlength="11" inputmode="numeric" oninput="validateLandline(this)" onblur="validateLandline(this)"><div class="error-msg" id="err-customerLandline">تلفن ثابت باید ۱۱ رقم باشد</div></div>
+                <div class="form-group"><label>تاریخ تولد (شمسی)</label><input type="text" id="customerBirth" placeholder="1370/05/20" oninput="formatDateInput(this)" onchange="formatDateInput(this)"></div>
+                <div class="form-group" style="grid-column:1/-1"><label>آدرس کامل</label><input type="text" id="customerAddress" placeholder="آدرس مشتری"></div>
+            </div>
+
+            <div class="section-title">🤝 مشخصات ضامن اول</div>
+            <div class="form-grid">
+                <div class="form-group"><label>نام و نام خانوادگی ضامن ۱ <span class="required">*</span></label><input type="text" id="guarantorName" placeholder="رضا احمدی"></div>
+                <div class="form-group"><label>نام پدر ضامن ۱</label><input type="text" id="guarantorFather" placeholder="محمد"></div>
+                <div class="form-group"><label>کد ملی ضامن ۱ <span class="required">*</span></label><input type="text" id="guarantorNational" placeholder="0023456789" maxlength="10" inputmode="numeric" oninput="validateNational(this,'err-guarantorNational')" onblur="validateNational(this,'err-guarantorNational')"><div class="error-msg" id="err-guarantorNational">کد ملی باید دقیقاً ۱۰ رقم باشد</div></div>
+                <div class="form-group"><label>شماره تماس ضامن ۱ <span class="required">*</span></label><input type="text" id="guarantorPhone" placeholder="09131234567" maxlength="11" inputmode="numeric" oninput="validateMobile(this,'err-guarantorPhone')" onblur="validateMobile(this,'err-guarantorPhone')"><div class="error-msg" id="err-guarantorPhone">موبایل باید ۱۱ رقم و با ۰۹ شروع شود</div></div>
+                <div class="form-group" style="grid-column:1/-1"><label>آدرس ضامن ۱</label><input type="text" id="guarantorAddress" placeholder="آدرس ضامن اول"></div>
+            </div>
+
+            <div class="section-title optional">🤝 مشخصات ضامن دوم</div>
+            <div class="form-grid">
+                <div class="form-group"><label>نام و نام خانوادگی ضامن ۲</label><input type="text" id="guarantor2Name" placeholder="حسین کریمی"></div>
+                <div class="form-group"><label>نام پدر ضامن ۲</label><input type="text" id="guarantor2Father" placeholder="اکبر"></div>
+                <div class="form-group"><label>کد ملی ضامن ۲</label><input type="text" id="guarantor2National" placeholder="0034567891" maxlength="10" inputmode="numeric" oninput="validateNational(this,'err-guarantor2National')" onblur="validateNational(this,'err-guarantor2National')"><div class="error-msg" id="err-guarantor2National">کد ملی باید دقیقاً ۱۰ رقم باشد</div></div>
+                <div class="form-group"><label>شماره تماس ضامن ۲</label><input type="text" id="guarantor2Phone" placeholder="09141234567" maxlength="11" inputmode="numeric" oninput="validateMobile(this,'err-guarantor2Phone')" onblur="validateMobile(this,'err-guarantor2Phone')"><div class="error-msg" id="err-guarantor2Phone">موبایل باید ۱۱ رقم و با ۰۹ شروع شود</div></div>
+                <div class="form-group" style="grid-column:1/-1"><label>آدرس ضامن ۲</label><input type="text" id="guarantor2Address" placeholder="آدرس ضامن دوم"></div>
+            </div>
+
+            <div class="section-title">🏍️ مشخصات موتورسیکلت</div>
+            <div class="form-grid">
+                <div class="form-group"><label>مدل موتور <span class="required">*</span></label><input type="text" id="bikeModel" placeholder="هوندا 125"></div>
+                <div class="form-group"><label>رنگ</label><input type="text" id="bikeColor" placeholder="مشکی"></div>
+                <div class="form-group"><label>سال ساخت</label><input type="text" id="bikeYear" placeholder="1403"></div>
+                <div class="form-group"><label>شماره شاسی</label><input type="text" id="bikeChassis" placeholder="ABC123456"></div>
+                <div class="form-group"><label>شماره موتور</label><input type="text" id="bikeEngine" placeholder="ENG987654"></div>
+                <div class="form-group"><label>🚗 شماره پلاک <span class="required">*</span></label><input type="text" id="bikePlate" placeholder="۱۲۳۴۵ - ایران ۱۲"></div>
+            </div>
+
+            <div class="section-title">💰 اطلاعات مالی</div>
+            <div class="form-grid">
+                <div class="form-group"><label>قیمت کل موتور (تومان) <span class="required">*</span></label><input type="text" id="totalPrice" class="money-input" placeholder="300,000,000" inputmode="numeric" oninput="formatMoneyInput(this)"></div>
+                <div class="form-group"><label>پیش‌پرداخت (تومان) <span class="required">*</span></label><input type="text" id="downPayment" class="money-input" placeholder="50,000,000" inputmode="numeric" oninput="formatMoneyInput(this)"></div>
+                <div class="form-group"><label>📅 تاریخ خرید <span class="required">*</span></label><input type="text" id="downPaymentDate" placeholder="1405/06/10" oninput="formatDateInput(this)" onchange="formatDateInput(this); autoUpdateStartDate(true)"><small class="hint">تاریخ اولین قسط = این + ۱ ماه</small></div>
+                <div class="form-group">
+                    <label>📅 تاریخ اولین قسط (خودکار/دستی)</label>
+                    <div class="input-with-btn">
+                        <input type="text" id="startDate" placeholder="1405/07/10" oninput="formatDateInput(this)" onchange="formatDateInput(this)">
+                        <button type="button" class="btn btn-outline" onclick="autoUpdateStartDate(false)" title="محاسبه خودکار">🔄</button>
+                    </div>
+                </div>
+                <div class="form-group"><label>نوع پیش‌پرداخت</label><select id="downPaymentType"><option value="نقدی">نقدی</option><option value="چک">چک</option><option value="کارت به کارت">کارت به کارت</option><option value="واریز بانکی">واریز بانکی</option></select></div>
+                <div class="form-group"><label>تعداد اقساط <span class="required">*</span></label><input type="number" id="installmentCount" placeholder="12" min="1" max="60"></div>
+                <div class="form-group"><label>💹 درصد قسط (٪ ماهانه) <span class="required">*</span></label><input type="text" id="installmentRate" class="decimal-input" placeholder="2.5" inputmode="decimal" oninput="formatDecimalInput(this)"></div>
+                <div class="form-group"><label>فاصله بین اقساط (روز)</label><input type="number" id="installmentInterval" placeholder="30" min="1" max="365" value="30"></div>
+                <div class="form-group"><label>نرخ جریمه (٪ روزانه)</label><input type="text" id="penaltyRate" class="decimal-input" placeholder="0.5" inputmode="decimal" oninput="formatDecimalInput(this)"></div>
+                <div class="form-group"><label>🚫 سقف جریمه (٪ مبلغ قسط)</label><input type="text" id="penaltyCap" class="decimal-input" placeholder="50" value="50" inputmode="decimal" oninput="formatDecimalInput(this)"><small class="hint">حداکثر ۵۰٪ مبلغ قسط</small></div>
+                <div class="form-group"><label>🏷️ دسته‌بندی</label><select id="contractTag"><option value="عادی">عادی</option><option value="مهم">مهم</option><option value="دیرکرد سابق">دیرکرد سابق</option><option value="معتبر">معتبر</option><option value="VIP">VIP</option><option value="مشکل‌دار">مشکل‌دار</option></select></div>
+                <div class="form-group"><label>نوع پیش‌فرض اقساط</label><select id="defaultPayType"><option value="نقدی">نقدی</option><option value="چک">چک</option></select></div>
+                <div class="form-group"><label>مبلغ هر قسط (خودکار)</label><input type="text" id="eachInstallment" readonly placeholder="محاسبه خودکار"></div>
+                <div class="form-group"><label>یادداشت</label><input type="text" id="notes" placeholder="توضیحات"></div>
+            </div>
+
+            <div class="financial-highlight">
+                <div class="fin-box"><div class="label">باقی‌مانده</div><div class="value" id="showRemaining">۰ تومان</div></div>
+                <div class="fin-box profit"><div class="label">💵 سود کل</div><div class="value" id="showProfit">۰ تومان</div></div>
+                <div class="fin-box final"><div class="label">🧾 مبلغ نهایی</div><div class="value" id="showFinal">۰ تومان</div></div>
+                <div class="fin-box"><div class="label">📅 هر قسط</div><div class="value" id="showEach">۰ تومان</div></div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="submitBtn" onclick="AppCore.submitContract()">💾 ثبت قرارداد</button>
+                <button class="btn btn-info" onclick="AppCore.calculateInstallment()">🧮 محاسبه قسط</button>
+                <button class="btn btn-outline" onclick="AppCore.resetForm()">🔄 فرم جدید</button>
+                <button class="btn btn-danger" id="cancelEditBtn" style="display:none" onclick="AppCore.cancelEdit()">✖ لغو ویرایش</button>
+            </div>
+        </div>
+
+        <div class="card no-print">
+            <h2><span>🔍</span> جستجو و فیلتر پیشرفته</h2>
+            <div class="form-grid">
+                <div class="form-group"><label>جستجو (نام، موبایل، مدل، شاسی، پلاک، ضامن)</label><input type="text" id="searchInput" placeholder="تایپ کنید..." oninput="AppUI.onSearchChange()"></div>
+                <div class="form-group"><label>وضعیت</label><select id="filterStatus" onchange="AppUI.onSearchChange()"><option value="all">همه</option><option value="paid">تسویه شده</option><option value="active">در حال پرداخت</option><option value="overdue">معوق</option></select></div>
+                <div class="form-group"><label>نوع پرداخت</label><select id="filterType" onchange="AppUI.onSearchChange()"><option value="all">همه</option><option value="نقدی">نقدی</option><option value="چک">چک</option></select></div>
+                <div class="form-group"><label>📅 از تاریخ خرید</label><input type="text" id="filterDateFrom" placeholder="1404/01/01" oninput="formatDateInput(this)"></div>
+                <div class="form-group"><label>📅 تا تاریخ خرید</label><input type="text" id="filterDateTo" placeholder="1405/12/29" oninput="formatDateInput(this)"></div>
+                <div class="form-group" style="justify-content:flex-end">
+                    <label style="visibility:hidden">دکمه‌ها</label>
+                    <div style="display:flex;gap:6px">
+                        <button class="btn btn-primary btn-sm" onclick="AppUI.applyDateFilter()" style="flex:1">اعمال</button>
+                        <button class="btn btn-outline btn-sm" onclick="AppUI.clearDateFilter()" style="flex:1">پاک</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tag-filters">
+                <span style="color:var(--muted);font-size:12px;font-weight:600;display:flex;align-items:center">🏷️ دسته‌بندی:</span>
+                <button class="tag-chip active" data-tag="all" onclick="AppUI.applyTagFilter('all')">همه</button>
+                <button class="tag-chip" data-tag="عادی" onclick="AppUI.applyTagFilter('عادی')">عادی</button>
+                <button class="tag-chip" data-tag="مهم" onclick="AppUI.applyTagFilter('مهم')">مهم</button>
+                <button class="tag-chip" data-tag="دیرکرد سابق" onclick="AppUI.applyTagFilter('دیرکرد سابق')">دیرکرد سابق</button>
+                <button class="tag-chip" data-tag="معتبر" onclick="AppUI.applyTagFilter('معتبر')">معتبر</button>
+                <button class="tag-chip" data-tag="VIP" onclick="AppUI.applyTagFilter('VIP')">VIP</button>
+                <button class="tag-chip" data-tag="مشکل‌دار" onclick="AppUI.applyTagFilter('مشکل‌دار')">مشکل‌دار</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span>📋</span> لیست قراردادها (<span id="countList">0</span> مورد)</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>#</th><th>مشتری</th><th>تماس</th><th>ضامن ۱</th><th>ضامن ۲</th><th>موتور</th><th>پلاک</th><th>قیمت کل</th><th>سود کل</th><th>دریافتی</th><th>مانده</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+                    <tbody id="contractsTable"></tbody>
+                </table>
+            </div>
+            <div id="emptyState" class="empty" style="display:none;"><span>📭</span> هنوز قراردادی ثبت نشده است.</div>
+
+            <div class="pagination no-print" id="pagination">
+                <div class="page-size-select">نمایش:
+                    <select id="pageSize" onchange="AppUI.changePageSize()"><option value="10">۱۰</option><option value="20" selected>۲۰</option><option value="50">۵۰</option><option value="100">۱۰۰</option><option value="9999">همه</option></select>
+                    در هر صفحه
+                </div>
+                <button onclick="AppUI.goToPage(1)" id="firstPage">⏮</button>
+                <button onclick="AppUI.goToPage(AppCore.State.currentPage-1)" id="prevPage">◀ قبلی</button>
+                <span class="page-info" id="pageInfo">صفحه ۱ از ۱</span>
+                <button onclick="AppUI.goToPage(AppCore.State.currentPage+1)" id="nextPage">بعدی ▶</button>
+                <button onclick="AppUI.goToPage(AppCore.State.totalPages)" id="lastPage">⏭</button>
+            </div>
+
+            <div class="actions no-print">
+                <button class="btn btn-success" onclick="AppUI.exportExcelXLSX()">📊 خروجی XLSX</button>
+                <button class="btn btn-info" onclick="document.getElementById('importExcelFile').click()">📥 ورودی اکسل</button>
+                <input type="file" id="importExcelFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="AppUI.importExcelSmart(event)">
+                <button class="btn btn-purple" onclick="AppUI.exportPaymentsXLSX()">💳 خروجی پرداخت‌ها</button>
+                <button class="btn btn-outline" onclick="AppUI.exportData()">📤 خروجی JSON</button>
+                <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 ورودی JSON</button>
+                <input type="file" id="importFile" accept=".json" style="display:none" onchange="AppUI.importData(event)">
+                <button class="btn btn-pink" onclick="AppUI.printAllContracts()">🖨️ چاپ همه</button>
+                <button class="btn btn-danger" onclick="AppCore.clearAllContracts()">🗑️ حذف همه</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== تب داشبورد ==================== -->
+    <div class="tab-content" id="content-dashboard">
+        <div class="card">
+            <h2><span>📊</span> داشبورد تحلیلی</h2>
+            <div class="dashboard-grid">
+                <div class="dash-card blue"><div class="label">👥 کل مشتریان</div><div class="value" id="dashCustomers">۰</div></div>
+                <div class="dash-card green"><div class="label">💰 مجموع فروش</div><div class="value" id="dashTotalSales">۰</div></div>
+                <div class="dash-card purple"><div class="label">💵 مجموع سود</div><div class="value" id="dashTotalProfit">۰</div></div>
+                <div class="dash-card orange"><div class="label">📥 دریافتی</div><div class="value" id="dashReceived">۰</div></div>
+                <div class="dash-card red"><div class="label">📉 مانده کل</div><div class="value" id="dashRemaining">۰</div></div>
+                <div class="dash-card pink"><div class="label">⚠️ معوق</div><div class="value" id="dashOverdue">۰</div></div>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-box"><h3>📈 فروش ماهانه (۶ ماه اخیر)</h3><div class="chart-container"><canvas id="salesChart"></canvas></div></div>
+                <div class="chart-box"><h3>🍩 وضعیت قراردادها</h3><div class="chart-container"><canvas id="statusChart"></canvas></div></div>
+            </div>
+            <div class="charts-grid" style="margin-top:20px">
+                <div class="chart-box"><h3>🏆 پرکارترین مدل‌ها</h3><div class="chart-container"><canvas id="bikeChart"></canvas></div></div>
+                <div class="chart-box"><h3>📊 وضعیت چک‌ها</h3><div class="chart-container"><canvas id="checkChart"></canvas></div></div>
+            </div>
+            <div class="section-title" style="margin-top:25px">📋 گزارشات سریع</div>
+            <div class="dashboard-grid">
+                <div class="dash-card blue"><div class="label">📅 سررسید امروز</div><div class="value" id="dashDueToday">۰</div></div>
+                <div class="dash-card orange"><div class="label">⏰ این هفته</div><div class="value" id="dashDueWeek">۰</div></div>
+                <div class="dash-card green"><div class="label">✅ پرداخت این ماه</div><div class="value" id="dashPaidMonth">۰</div></div>
+                <div class="dash-card red"><div class="label">🚨 جریمه معوق</div><div class="value" id="dashTotalPenalty">۰</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== تب چک‌ها ==================== -->
+    <div class="tab-content" id="content-checks">
+        <div class="card">
+            <h2><span>📋</span> مدیریت چک‌ها</h2>
+            <div class="form-grid no-print" style="margin-bottom:15px">
+                <div class="form-group"><label>جستجو</label><input type="text" id="checkSearch" placeholder="شماره، سریال، بانک..." oninput="AppUI.renderChecksTable()"></div>
+                <div class="form-group"><label>وضعیت</label><select id="checkFilter" onchange="AppUI.renderChecksTable()"><option value="all">همه</option><option value="in_progress">⏳ در جریان</option><option value="passed">✅ پاس شده</option><option value="bounced">❌ برگشتی</option></select></div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dash-card blue"><div class="label">📊 کل چک‌ها</div><div class="value" id="checkTotal">۰</div></div>
+                <div class="dash-card orange"><div class="label">⏳ در جریان</div><div class="value" id="checkInProgress">۰</div></div>
+                <div class="dash-card green"><div class="label">✅ پاس شده</div><div class="value" id="checkPassed">۰</div></div>
+                <div class="dash-card red"><div class="label">❌ برگشتی</div><div class="value" id="checkBounced">۰</div></div>
+            </div>
+            <div class="table-wrap" style="margin-top:15px">
+                <table>
+                    <thead><tr><th>#</th><th>مشتری</th><th>شماره چک</th><th>سریال</th><th>بانک/شعبه</th><th>در وجه</th><th>مبلغ</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+                    <tbody id="checksTable"></tbody>
+                </table>
+            </div>
+            <div id="checksEmpty" class="empty" style="display:none;"><span>📭</span> چکی ثبت نشده.</div>
+        </div>
+    </div>
+
+    <!-- ==================== تب لاگ‌ها ==================== -->
+    <div class="tab-content" id="content-logs">
+        <div class="card">
+            <h2><span>📜</span> لاگ فعالیت‌ها</h2>
+            <div class="actions no-print" style="margin-bottom:15px">
+                <button class="btn btn-danger" onclick="AppUI.clearAllLogsSafely()">🗑️ پاک کردن (با آرشیو)</button>
+            </div>
+            <div id="logsList" style="max-height:600px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+    <footer class="designer">
+        <span class="heart">❤</span>
+        طراحی و توسعه: <b>احمد علی پرست</b>
+        <span class="heart">❤</span>
+    </footer>
+</div>
+</div>
+
+<!-- ==================== مودال‌ها ==================== -->
+<div class="modal" id="installmentModal"><div class="modal-content"><div class="modal-header"><h3 id="modalTitle">اقساط</h3><button class="close-btn" onclick="AppUI.closeModal()">✕</button></div><div id="modalBody"></div></div></div>
+
+<div class="modal" id="payModal"><div class="modal-content" style="max-width:600px"><div class="modal-header"><h3 id="payModalTitle">ثبت پرداخت</h3><button class="close-btn" onclick="AppUI.closePayModal()">✕</button></div><div id="payModalBody"></div></div></div>
+
+<div class="modal" id="settingsModal"><div class="modal-content" style="max-width:600px"><div class="modal-header"><h3>⚙️ تنظیمات</h3><button class="close-btn" onclick="AppUI.closeSettings()">✕</button></div><div id="settingsBody"></div></div></div>
+
+<div class="modal" id="checkStatusModal"><div class="modal-content" style="max-width:450px"><div class="modal-header"><h3 id="checkModalTitle">وضعیت چک</h3><button class="close-btn" onclick="AppUI.closeCheckStatusModal()">✕</button></div><div id="checkStatusBody"></div></div></div>
+
+<!-- مودال راه‌اندازی اولیه -->
+<div class="modal" id="firstSetupModal">
+    <div class="modal-content" style="max-width:500px">
+        <div class="modal-header">
+            <h3>🔐 راه‌اندازی اولیه</h3>
+            <button class="close-btn" onclick="AppCore.closeFirstSetup()">✕</button>
+        </div>
+        <div class="section-title">ایجاد حساب مدیر</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:15px;line-height:1.9">
+            این برنامه اطلاعات قراردادها را به‌صورت رمزگذاری‌شده نگهداری می‌کند. 
+            رمز عبور شما روی سرور ارسال نمی‌شود و بازیابی آن از داخل برنامه ممکن نیست؛ 
+            بنابراین آن را در جای امن نگهداری کنید.
+        </p>
+        <div class="form-group" style="margin-bottom:10px">
+            <label>نام کاربری</label>
+            <input id="setupUsername" value="admin" readonly>
+        </div>
+        <div class="form-group" style="margin-bottom:10px">
+            <label>رمز عبور جدید (حداقل ۱۰ کاراکتر)</label>
+            <input type="password" id="setupPassword" autocomplete="new-password">
+            <div id="passwordStrength" style="margin-top:5px;font-size:11px"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:15px">
+            <label>تکرار رمز عبور</label>
+            <input type="password" id="setupPassword2" autocomplete="new-password">
+        </div>
+        <button class="btn btn-success" style="width:100%" onclick="AppCore.createAdminAccount()">
+            💾 ایجاد حساب و شروع کار
+        </button>
+    </div>
+</div>
+
+<!-- مودال Snapshots -->
+<div class="modal" id="snapshotsModal">
+    <div class="modal-content" style="max-width:600px">
+        <div class="modal-header">
+            <h3>📸 نسخه‌های داخلی</h3>
+            <button class="close-btn" onclick="document.getElementById('snapshotsModal').classList.remove('active')">✕</button>
+        </div>
+        <div id="snapshotsBody"></div>
+    </div>
+</div>
+
+<!-- مودال سطل بازیابی -->
+<div class="modal" id="trashModal">
+    <div class="modal-content" style="max-width:600px">
+        <div class="modal-header">
+            <h3>🗑️ سطل بازیابی</h3>
+            <button class="close-btn" onclick="document.getElementById('trashModal').classList.remove('active')">✕</button>
+        </div>
+        <div id="trashBody"></div>
+    </div>
+</div>
+
+<!-- ==================== مودال خروج ==================== -->
+<div class="exit-modal" id="exitModal">
+    <div class="exit-box">
+        <div class="exit-icon">💾</div>
+        <h2>پشتیبان‌گیری قبل از خروج</h2>
+        <div class="subtitle">
+            قبل از بستن برنامه، توصیه می‌شود یک نسخه پشتیبان تهیه کنید تا اطلاعات شما در امان بماند.<br>
+            <b style="color:var(--purple)" id="exitModalCount">0</b> قرارداد در سیستم ثبت شده است.
+        </div>
+        <div class="exit-actions">
+            <button class="btn btn-success" onclick="AppCore.exitWithBackup('json')">📥 دانلود پشتیبان (JSON) و خروج</button>
+            <button class="btn btn-info" onclick="AppCore.exitWithBackup('xlsx')">📊 دانلود پشتیبان (اکسل) و خروج</button>
+            <button class="btn btn-outline" onclick="AppCore.exitWithoutBackup()">🚪 خروج بدون پشتیبان</button>
+            <button class="btn btn-warning" onclick="AppCore.cancelExit()">↩️ انصراف و بازگشت به برنامه</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Loading ==================== -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div id="loadingText">در حال بارگذاری...</div>
+</div>
+
+<!-- ==================== Toast ==================== -->
+<div class="toast" id="toast"></div>
+
+<!-- ==================== CDN Libraries با Fallback ==================== -->
+<script>
+/* ============================================================
+   Fallback Loader برای CDNها
+   ============================================================ */
+(function(){
+    'use strict';
+    
+    const CDN_SOURCES = {
+        xlsx: {
+            test: () => typeof XLSX !== 'undefined',
+            urls: [
+                'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+                'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+            ]
+        },
+        chart: {
+            test: () => typeof Chart !== 'undefined',
+            urls: [
+                'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
+                'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js'
+            ]
+        },
+        jalaali: {
+            test: () => typeof jalaali !== 'undefined',
+            urls: [
+                'https://cdn.jsdelivr.net/npm/jalaali-js@1.2.0/dist/jalaali.js',
+                'https://unpkg.com/jalaali-js@1.2.0/dist/jalaali.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/jalaali-js/1.2.0/jalaali.js'
+            ]
+        },
+        jspdf: {
+            test: () => typeof window.jspdf !== 'undefined' || typeof jsPDF !== 'undefined',
+            urls: [
+                'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
+                'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+            ]
+        }
+    };
+    
+    function loadScript(url){
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = false;
+            script.onload = () => resolve(url);
+            script.onerror = () => reject(new Error(`Failed: ${url}`));
+            document.head.appendChild(script);
+        });
+    }
+    
+    async function loadWithFallback(libName){
+        const lib = CDN_SOURCES[libName];
+        if(!lib) return false;
+        
+        if(lib.test()){
+            console.log(`✅ ${libName} قبلاً لود شده`);
+            return true;
+        }
+        
+        for(const url of lib.urls){
+            try{
+                await loadScript(url);
+                if(lib.test()){
+                    console.log(`✅ ${libName} از ${url} لود شد`);
+                    return true;
+                }
+            }catch(e){
+                console.warn(`⚠️ تلاش ${libName} از ${url} ناموفق`);
+            }
+        }
+        
+        console.error(`❌ ${libName} از هیچ CDN لود نشد`);
+        return false;
+    }
+    
+    window.CDNLoader = {
+        load: async () => {
+            const results = {};
+            results.jalaali = await loadWithFallback('jalaali');
+            results.xlsx = await loadWithFallback('xlsx');
+            results.chart = await loadWithFallback('chart');
+            results.jspdf = await loadWithFallback('jspdf');
+            return results;
+        }
+    };
+})();
+</script>
+
+<!-- ==================== فایل‌های اصلی برنامه ==================== -->
+<script src="crypto.js"></script>
+<script src="backup.js"></script>
+<script src="app.js"></script>
+
+<!-- ==================== توابع کمکی عمومی ==================== -->
+<script>
+/* ============================================================
+   توابع کمکی عمومی (برای استفاده در HTML)
+============================================================ */
+
+function toEnglishDigits(str){
+    const fa = '۰۱۲۳۴۵۶۷۸۹', ar = '٠١٢٣٤٥٦٧٨٩';
+    return String(str).replace(/[۰-۹]/g, d => fa.indexOf(d)).replace(/[٠-٩]/g, d => ar.indexOf(d));
+}
+
+function toPersianDigits(str){
+    const fa = '۰۱۲۳۴۵۶۷۸۹';
+    return String(str).replace(/\d/g, d => fa[d]);
+}
+
+function formatMoney(n){
+    if(isNaN(n) || n === null || n === undefined) return '۰';
+    return Number(Math.round(n)).toLocaleString('fa-IR');
+}
+
+function formatMoneyInput(input){
+    let raw = toEnglishDigits(input.value).replace(/[^0-9]/g, '');
+    raw = raw.replace(/^0+(?=\d)/, '');
+    if(raw === ''){ 
+        input.value = ''; 
+        if(window.AppCore) AppCore.calculateInstallment(); 
+        return; 
+    }
+    input.value = Number(raw).toLocaleString('en-US');
+    if(window.AppCore) AppCore.calculateInstallment();
+}
+
+function formatDecimalInput(input){
+    let raw = String(input.value)
+        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+        .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+        .replace(/[،,]/g, '.')
+        .replace(/[^0-9.]/g, '');
+    const parts = raw.split('.');
+    if(parts.length > 2) raw = parts[0] + '.' + parts.slice(1).join('');
+    input.value = raw;
+    if(window.AppCore) AppCore.calculateInstallment();
+}
+
+function formatDateInput(input){
+    let raw = toEnglishDigits(input.value).replace(/[^0-9\/]/g, '');
+    const parts = raw.split('/');
+    if(parts.length > 3) raw = parts.slice(0, 3).join('/');
+    input.value = toPersianDigits(raw);
+}
+
+function validateNational(input, errId){
+    const errElement = errId ? document.getElementById(errId) : document.getElementById('err-' + input.id);
+    const val = toEnglishDigits(input.value.replace(/[^0-9۰-۹٠-٩]/g, ''));
+    input.value = toPersianDigits(val);
+    if(val === ''){ input.classList.remove('invalid', 'valid'); if(errElement) errElement.classList.remove('show'); return true; }
+    if(val.length === 10){ input.classList.remove('invalid'); input.classList.add('valid'); if(errElement) errElement.classList.remove('show'); return true; }
+    input.classList.remove('valid'); input.classList.add('invalid'); if(errElement) errElement.classList.add('show'); return false;
+}
+
+function validateMobile(input, errId){
+    const errElement = errId ? document.getElementById(errId) : document.getElementById('err-' + input.id);
+    const val = toEnglishDigits(input.value.replace(/[^0-9۰-۹٠-٩]/g, ''));
+    input.value = toPersianDigits(val);
+    if(val === ''){ input.classList.remove('invalid', 'valid'); if(errElement) errElement.classList.remove('show'); return true; }
+    if(val.length === 11 && val.startsWith('09')){ input.classList.remove('invalid'); input.classList.add('valid'); if(errElement) errElement.classList.remove('show'); return true; }
+    input.classList.remove('valid'); input.classList.add('invalid'); if(errElement) errElement.classList.add('show'); return false;
+}
+
+function validateLandline(input, errId){
+    const errElement = errId ? document.getElementById(errId) : document.getElementById('err-' + input.id);
+    const val = toEnglishDigits(input.value.replace(/[^0-9۰-۹٠-٩]/g, ''));
+    input.value = toPersianDigits(val);
+    if(val === ''){ input.classList.remove('invalid', 'valid'); if(errElement) errElement.classList.remove('show'); return true; }
+    if(val.length === 11){ input.classList.remove('invalid'); input.classList.add('valid'); if(errElement) errElement.classList.remove('show'); return true; }
+    input.classList.remove('valid'); input.classList.add('invalid'); if(errElement) errElement.classList.add('show'); return false;
+}
+
+function jalaaliToGregorian(jStr){
+    if(typeof jalaali !== 'undefined'){
+        try{
+            jStr = toEnglishDigits(String(jStr)).trim();
+            const parts = jStr.split('/');
+            if(parts.length !== 3) return new Date();
+            const jy = parseInt(parts[0]), jm = parseInt(parts[1]), jd = parseInt(parts[2]);
+            const g = jalaali.toGregorian(jy, jm, jd);
+            return new Date(g.gy, g.gm - 1, g.gd, 12, 0, 0);
+        }catch(e){}
+    }
+    return fallbackJalaliToGregorian(jStr);
+}
+
+function fallbackJalaliToGregorian(jStr){
+    jStr = toEnglishDigits(jStr).trim();
+    const parts = jStr.split('/');
+    if(parts.length !== 3) return new Date();
+    let jy = parseInt(parts[0]), jm = parseInt(parts[1]), jd = parseInt(parts[2]);
+    if(isNaN(jy) || isNaN(jm) || isNaN(jd)) return new Date();
+    let gy, gm, gd;
+    jy += 1595;
+    let days = -355668 + (365 * jy) + (~~(jy / 33) * 8) + ~~(((jy % 33) + 3) / 4) + jd + ((jm < 7) ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+    gy = 400 * ~~(days / 146097); days %= 146097;
+    if(days > 36524){ gy += 100 * ~~(--days / 36524); days %= 36524; if(days >= 365) days++; }
+    gy += 4 * ~~(days / 1461); days %= 1461;
+    if(days > 365){ gy += ~~((days - 1) / 365); days = (days - 1) % 365; }
+    gd = days + 1;
+    const sal_a = [0, 31, (gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    for(gm = 0; gm < 13 && gd > sal_a[gm]; gm++) gd -= sal_a[gm];
+    return new Date(gy, gm - 1, gd, 12, 0, 0);
+}
+
+function gregorianToJalali(date){
+    if(typeof jalaali !== 'undefined'){
+        try{
+            const j = jalaali.toJalaali(date.getFullYear(), date.getMonth() + 1, date.getDate());
+            return `${j.jy}/${String(j.jm).padStart(2, '0')}/${String(j.jd).padStart(2, '0')}`;
+        }catch(e){}
+    }
+    try{
+        return new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(date).replace(/\//g, '/');
+    }catch(e){
+        return '';
+    }
+}
+
+function dateToJalali(d){ return gregorianToJalali(d); }
+function getTodayJalali(){ return dateToJalali(new Date()); }
+function todayJalali(){ return getTodayJalali(); }
+
+function addMonthsToJalali(jStr, months){
+    const d = jalaaliToGregorian(jStr);
+    d.setMonth(d.getMonth() + months);
+    return dateToJalali(d);
+}
+
+function addDaysToJalali(jStr, days){
+    const d = jalaaliToGregorian(jStr);
+    d.setDate(d.getDate() + days);
+    return dateToJalali(d);
+}
+
+function autoUpdateStartDate(){
+    const dpDate = toEnglishDigits(document.getElementById('downPaymentDate').value.trim());
+    if(!/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(dpDate)) return;
+    document.getElementById('startDate').value = toPersianDigits(addMonthsToJalali(dpDate, 1));
+}
+
+function getJalaliTimestamp(){
+    try{
+        const d = new Date();
+        const jy = new Intl.DateTimeFormat('fa-IR', { year: 'numeric' }).format(d);
+        const jm = new Intl.DateTimeFormat('fa-IR', { month: '2-digit' }).format(d);
+        const jd = new Intl.DateTimeFormat('fa-IR', { day: '2-digit' }).format(d);
+        return `${jy}-${jm}-${jd}`.replace(/\//g, '-');
+    }catch(e){
+        return Date.now().toString();
+    }
+}
+
+function generateTrackingCode(){
+    const d = new Date();
+    return `TRK-${String(d.getFullYear()).slice(-2)}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}-${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}${String(d.getSeconds()).padStart(2, '0')}-${Math.floor(Math.random() * 9000 + 1000)}`;
+}
+</script>
+
+<!-- ==================== راه‌اندازی نهایی ==================== -->
+<script>
+/* ============================================================
+   راه‌اندازی نهایی + Fallback Loading
+============================================================ */
+
+(async function(){
+    'use strict';
+    
+    const loading = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    
+    function showLoading(text){
+        if(loadingText) loadingText.textContent = text || 'در حال بارگذاری...';
+        if(loading) loading.classList.add('active');
+    }
+    
+    function hideLoading(){
+        if(loading) loading.classList.remove('active');
+    }
+    
+    showLoading('در حال بارگذاری کتابخانه‌ها...');
+    
+    try{
+        const results = await window.CDNLoader.load();
+        
+        Object.keys(results).forEach(lib => {
+            if(!results[lib]){
+                console.warn(`⚠️ کتابخانه ${lib} لود نشد`);
+            }
+        });
+        
+        if(typeof jalaali === 'undefined'){
+            console.warn('⚠️ تقویم دقیق لود نشد - از fallback استفاده می‌شود');
+        }
+    } catch(e){
+        console.error('خطا در بارگذاری کتابخانه‌ها:', e);
+    }
+    
+    showLoading('آماده‌سازی برنامه...');
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    if(typeof CryptoLayer === 'undefined'){
+        console.error('❌ crypto.js لود نشد');
+        hideLoading();
+        alert('خطا: فایل crypto.js پیدا نشد.\nمطمئن شوید همه‌ی فایل‌ها در یک پوشه هستند.');
+        return;
+    }
+    
+    if(typeof BackupLayer === 'undefined'){
+        console.warn('⚠️ backup.js لود نشد');
+    }
+    
+    if(typeof AppCore === 'undefined'){
+        console.error('❌ app.js لود نشد');
+        hideLoading();
+        alert('خطا: فایل app.js پیدا نشد.\nمطمئن شوید همه‌ی فایل‌ها در یک پوشه هستند.');
+        return;
+    }
+    
+    hideLoading();
+    
+    console.log('🎉 برنامه آماده است');
+    console.log('📋 نسخه:', window.AppCore?.APP_CONFIG?.VERSION || '?');
+    console.log('🔐 رمزنگاری: AES-256-GCM');
+    console.log('🔑 PBKDF2: 210,000 تکرار');
+    console.log('💾 ذخیره‌سازی: IndexedDB + localStorage');
+    console.log('🌐 HTTPS:', window.isSecureContext ? '✅' : '⚠️');
+    console.log('📁 File System:', typeof BackupLayer !== 'undefined' && BackupLayer.isSupported() ? '✅' : '❌');
+    
+})();
+</script>
+
+</body>
+</html>
