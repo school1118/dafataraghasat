@@ -3334,6 +3334,283 @@ if(document.readyState === 'loading'){
 }
 
 /* ==================== صادرات ==================== */
+/* ==================== AppMerged - توابع ادغام‌شده ==================== */
+
+window.AppMerged = {
+    // ⭐ بارگذاری امن (با محافظت از بازنویسی)
+    safeLoadData: async function(){
+        try{
+            const result = await CryptoLayer.loadSecureData(State.currentPassword);
+            
+            if(!result.success){
+                return {
+                    _loadError: true,
+                    reason: result.reason || 'رمزگشایی ناموفق',
+                    contracts: []
+                };
+            }
+            
+            if(!result.data){
+                return {
+                    version: 1,
+                    contracts: []
+                };
+            }
+            
+            const migrated = migrateData({
+                version: result.data.version || 0,
+                contracts: result.data.contracts || []
+            });
+            
+            return migrated;
+        }catch(e){
+            console.error('Safe load error:', e);
+            return {
+                _loadError: true,
+                reason: e.message,
+                contracts: []
+            };
+        }
+    },
+    
+    // ⭐ نمایش لیست Snapshots
+    showSnapshotsList: async function(){
+        try{
+            const snapshots = await CryptoLayer.listSnapshots();
+            
+            let html = `
+                <div class="section-title">📸 نسخه‌های داخلی (Snapshots)</div>
+                <div style="max-height:400px;overflow-y:auto;margin-top:10px">
+            `;
+            
+            if(snapshots.length === 0){
+                html += '<div style="text-align:center;padding:20px;color:var(--muted)">هیچ نسخه‌ای موجود نیست</div>';
+            } else {
+                snapshots.forEach(s => {
+                    const date = new Date(s.date);
+                    const jalaliDate = gregorianToJalali(date);
+                    const time = date.toLocaleTimeString('fa-IR');
+                    
+                    html += `
+                        <div class="user-card" style="margin-bottom:8px">
+                            <div class="info">
+                                <div class="name">
+                                    📸 ${toPersianDigits(jalaliDate)} - ${toPersianDigits(time)}
+                                </div>
+                                <div class="meta">
+                                    ${toPersianDigits(s.count)} قرارداد
+                                    ${s.label ? ' | ' + s.label : ''}
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:6px">
+                                <button class="btn btn-success btn-sm" onclick="AppMerged.restoreSnapshotById('${s.id}')">
+                                    ↩️ بازیابی
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="AppMerged.deleteSnapshotById('${s.id}')">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += '</div>';
+            
+            const modal = document.getElementById('snapshotsModal');
+            if(modal){
+                document.getElementById('snapshotsBody').innerHTML = html;
+                modal.classList.add('active');
+            }
+        }catch(e){
+            showToast('خطا در بارگذاری نسخه‌ها', 'danger');
+        }
+    },
+    
+    // ⭐ بازیابی یک Snapshot
+    restoreSnapshotById: async function(id){
+        if(!confirm('این نسخه جایگزین اطلاعات فعلی شود؟\nقبل از جایگزینی، از اطلاعات فعلی snapshot ساخته می‌شود.')){
+            return;
+        }
+        
+        try{
+            await CryptoLayer.createSnapshot(State.contracts, State.currentPassword, 'قبل از بازیابی');
+            
+            const result = await CryptoLayer.restoreSnapshot(id, State.currentPassword);
+            
+            if(result.success){
+                State.contracts = result.contracts;
+                await saveAllData();
+                renderAll();
+                
+                document.getElementById('snapshotsModal').classList.remove('active');
+                
+                addLog('restore_snapshot', `${State.contracts.length} قرارداد`);
+                showToast('✅ بازیابی موفق', 'success');
+            } else {
+                showToast(result.reason, 'danger');
+            }
+        }catch(e){
+            console.error(e);
+            showToast('خطا در بازیابی', 'danger');
+        }
+    },
+    
+    // ⭐ حذف Snapshot
+    deleteSnapshotById: async function(id){
+        if(!confirm('این نسخه پاک شود؟')) return;
+        
+        const result = await CryptoLayer.deleteSnapshot(id);
+        if(result.success){
+            showToast('نسخه پاک شد', 'warning');
+            AppMerged.showSnapshotsList();
+        }
+    },
+    
+    // ⭐ نمایش سطل بازیابی
+    showTrashList: async function(){
+        try{
+            const trash = await CryptoLayer.getTrash();
+            
+            let html = `
+                <div class="section-title">🗑️ سطل بازیابی</div>
+                <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="badge badge-info">
+                        ${toPersianDigits(trash.length)} مورد
+                    </span>
+                    ${trash.length > 0 ? `
+                        <button class="btn btn-danger btn-sm" onclick="AppMerged.emptyTrashConfirm()">
+                            🗑️ خالی کردن سطل
+                        </button>
+                    ` : ''}
+                </div>
+                <div style="max-height:400px;overflow-y:auto">
+            `;
+            
+            if(trash.length === 0){
+                html += '<div style="text-align:center;padding:20px;color:var(--muted)">سطل بازیابی خالی است</div>';
+            } else {
+                trash.sort((a, b) => b.deletedAtTimestamp - a.deletedAtTimestamp);
+                
+                trash.forEach(item => {
+                    const date = new Date(item.deletedAtTimestamp);
+                    const jalaliDate = gregorianToJalali(date);
+                    
+                    html += `
+                        <div class="user-card" style="margin-bottom:8px">
+                            <div class="info">
+                                <div class="name">${item.customerName || 'نامشخص'}</div>
+                                <div class="meta">
+                                    مدل: ${item.bikeModel || '-'} | 
+                                    تاریخ حذف: ${toPersianDigits(jalaliDate)}
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:6px">
+                                <button class="btn btn-success btn-sm" onclick="AppMerged.restoreTrashById(${item.id})">
+                                    ↩️ بازیابی
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += '</div>';
+            
+            const modal = document.getElementById('trashModal');
+            if(modal){
+                document.getElementById('trashBody').innerHTML = html;
+                modal.classList.add('active');
+            }
+        }catch(e){
+            console.error(e);
+            showToast('خطا در بارگذاری سطل', 'danger');
+        }
+    },
+    
+    // ⭐ بازیابی از Trash
+    restoreTrashById: async function(id){
+        if(!confirm('این مورد به لیست قراردادها بازگردانده شود؟')) return;
+        
+        try{
+            const result = await CryptoLayer.restoreFromTrash(id);
+            
+            if(result.success){
+                const exists = State.contracts.some(c => c.id === result.item.id);
+                
+                if(exists){
+                    result.item.id = Date.now() + Math.random();
+                }
+                
+                delete result.item.deletedAt;
+                delete result.item.deletedAtTimestamp;
+                
+                State.contracts.push(result.item);
+                await saveAllData();
+                renderAll();
+                
+                AppMerged.showTrashList();
+                
+                addLog('restore_from_trash', result.item.customerName || '');
+                showToast('✅ بازیابی شد', 'success');
+            } else {
+                showToast(result.error || 'خطا در بازیابی', 'danger');
+            }
+        }catch(e){
+            console.error(e);
+            showToast('خطا', 'danger');
+        }
+    },
+    
+    // ⭐ خالی کردن Trash
+    emptyTrashConfirm: async function(){
+        if(!confirm('همه‌ی موارد سطل بازیابی پاک شوند؟ این عملیات قابل بازگشت نیست.')) return;
+        
+        try{
+            await CryptoLayer.emptyTrash();
+            AppMerged.showTrashList();
+            showToast('سطل بازیابی خالی شد', 'warning');
+        }catch(e){
+            showToast('خطا در خالی کردن', 'danger');
+        }
+    },
+    
+    // ⭐ Factory Reset
+    factoryResetConfirm: async function(){
+        if(!confirm('⚠️ هشدار: تمام داده‌ها پاک می‌شوند!\nقبل از این کار حتماً پشتیبان بگیرید.\nادامه؟')){
+            return;
+        }
+        
+        if(!confirm('آیا مطمئنید؟ این عملیات قابل بازگشت نیست!')){
+            return;
+        }
+        
+        const confirmText = prompt('برای تأیید نهایی، بنویسید: DELETE');
+        
+        if(confirmText !== 'DELETE'){
+            showToast('لغو شد', 'info');
+            return;
+        }
+        
+        try{
+            await CryptoLayer.createSnapshot(State.contracts, State.currentPassword, 'پشتیبان نهایی قبل از Factory Reset');
+            await CryptoLayer.factoryReset();
+            
+            localStorage.removeItem('moto_last_backup');
+            localStorage.removeItem('moto_theme');
+            
+            showToast('✅ همه چیز پاک شد. صفحه بسته می‌شود...', 'success');
+            
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }catch(e){
+            showToast('خطا در پاک کردن', 'danger');
+        }
+    }
+};
+
+console.log('✅ AppMerged بارگذاری شد');
 window.AppCore = {
     State, APP_CONFIG,
     doLogin, requestLogout, cancelExit, exitWithBackup, exitWithoutBackup, performLogout,
